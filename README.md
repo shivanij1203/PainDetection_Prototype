@@ -1,53 +1,39 @@
-# NeoAnnotate - NICU Image Quality Analyzer & Annotation Tool
+# NeoAnnotate - NICU Image Analyzer & Annotation Tool
 
-A research tool addressing key challenges in neonatal pain detection: **image quality pre-screening** and **occlusion detection**.
+Tool for analyzing image quality and annotating neonatal pain expressions in NICU settings.
 
-## The Problem (From Published Research)
+## Background
 
-USF's neonatal pain detection research identified critical challenges:
+This project is based on research challenges identified in neonatal pain detection studies - specifically around image quality issues and occlusion from medical equipment that makes facial detection difficult.
 
-> "Images with average pixel intensity of 25 or lower are unusable for annotation"
-> — *IEEE Access, 2024*
+Key issues addressed:
+- Dark images (research suggests images with pixel intensity ≤25 are unusable)
+- Blur and motion blur
+- Occlusion from NICU equipment blocking faces
+- Low contrast making facial features hard to distinguish
 
-> "Occlusion from medical equipment blocks facial detection in NICU settings"
-> — *USF RPAL Research*
+## Features
 
-This tool directly addresses these challenges with automated quality analysis.
+**Image Quality Analysis**
+- Checks brightness, blur, contrast
+- Detects if faces are visible or blocked
+- Uses MediaPipe for face detection and landmark analysis
 
-## Key Features
+**Batch Processing**
+- Upload multiple images for analysis
+- Get summary of usable vs unusable images
 
-### 1. Image Quality Pre-Screener
-Automatically detects:
-- **Dark images** (threshold: pixel intensity ≤25, per research findings)
-- **Blur/motion blur** (Laplacian variance analysis)
-- **Low contrast** (hard to distinguish facial features)
-- **Resolution issues** (faces too small for reliable detection)
-
-### 2. Occlusion & Face Visibility Detector
-Using MediaPipe and OpenCV:
-- Face detection with confidence scoring
-- Landmark visibility analysis (468 facial landmarks)
-- Occlusion level assessment (none/partial/severe)
-- Likely cause identification (equipment, pose, framing)
-
-### 3. Batch Processing
-- Analyze multiple images at once
-- Get summary statistics (usable/marginal/unusable counts)
-- Export quality reports
-
-### 4. NIPS Annotation Interface
-Standard annotation workflow:
-- Video/frame management
-- NIPS scoring (6 components, 0-7 scale)
-- Export to CSV/JSON for ML pipelines
+**NIPS Annotation**
+- Standard NIPS scoring interface (6 components)
+- Export annotations to CSV/JSON
 
 ## Tech Stack
 
-- **Backend**: Django + Django REST Framework + OpenCV + MediaPipe
-- **Frontend**: React + Vite
-- **Analysis**: OpenCV for image processing, MediaPipe for face detection
+- Backend: Django + Django REST Framework
+- Frontend: React + Vite
+- Image Processing: OpenCV, MediaPipe
 
-## Running Locally
+## Setup
 
 ### Backend
 ```bash
@@ -56,8 +42,6 @@ python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 python manage.py migrate
-python manage.py load_demo_data  # load sample annotation data
-python generate_test_images.py   # generate quality test images
 python manage.py runserver 8000
 ```
 
@@ -68,39 +52,22 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173 → Click "Quality Analyzer" to test
-
-## Sample Test Images
-
-The `backend/test_images/` folder contains synthetic images demonstrating:
-- `good_quality.jpg` - Passes all checks
-- `very_dark_below_threshold.jpg` - Below ≤25 intensity threshold
-- `blurry.jpg` - Motion blur detection
-- `occluded_equipment.jpg` - Simulated medical equipment
-- `low_contrast.jpg` - Feature detection difficulty
+Go to http://localhost:5173 and click Quality Analyzer to test.
 
 ## API Endpoints
 
 ```
-POST /api/analyze/image/     - Analyze single image (base64 or file upload)
-POST /api/analyze/batch/     - Batch analysis with summary
-GET  /api/analyze/thresholds/ - Get threshold values and research references
+POST /api/analyze/image/     - Analyze single image
+POST /api/analyze/batch/     - Batch analysis
+GET  /api/analyze/thresholds/ - Get threshold values
 ```
 
-## Research References
+## References
 
-- Hausmann, J. et al. (2024). "Accurate Neonatal Face Detection for Improved Pain Classification in the Challenging NICU Setting." *IEEE Access*.
-- USF RPAL Neonatal Pain Project: https://rpal.cse.usf.edu/project_neonatal_pain/
-- Lawrence, J. et al. (1993). "The development of a tool to assess neonatal pain." *Neonatal Network*.
-
-## Why This Matters
-
-Before training ML models for pain detection, you need clean data. This tool helps:
-1. **Filter out unusable images** before annotation (saves time)
-2. **Identify systematic issues** in data collection (lighting, equipment placement)
-3. **Prioritize annotation efforts** on high-quality frames
-4. **Improve model training** by ensuring data quality
+- Hausmann et al. (2024). "Accurate Neonatal Face Detection for Improved Pain Classification" IEEE Access
+- USF RPAL Neonatal Pain Project
+- Lawrence et al. (1993). NIPS development paper
 
 ---
 
-Built as a research prototype to support USF's neonatal pain detection work.
+Research prototype for neonatal pain detection work.
